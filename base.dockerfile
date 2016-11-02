@@ -1,42 +1,15 @@
-FROM debian:jessie
+FROM jshimko/meteor-launchpad:base
 MAINTAINER Jeremy Shimko <jeremy.shimko@gmail.com>
-# Forked from Jeremy Shimko
 
-RUN groupadd -r node && useradd -m -g node node
+# copy the app to the container
+ONBUILD COPY . $APP_SOURCE_DIR
 
-ENV NODE_VERSION 4.6.1
-ENV GOSU_VERSION 1.9
+# optionally install Mongo or Phantom at app build time
+ONBUILD RUN bash $BUILD_SCRIPTS_DIR/install-phantom.sh
+ONBUILD RUN bash $BUILD_SCRIPTS_DIR/install-mongo.sh
 
-# Optionally Install MongoDB
-ENV INSTALL_MONGO false
-ENV MONGO_VERSION 3.2.10
-ENV MONGO_MAJOR 3.2
-
-# Optionally Install PhantomJS
-ENV INSTALL_PHANTOMJS false
-ENV PHANTOM_VERSION 2.1.1
-
-# build directories
-ENV APP_SOURCE_DIR /opt/meteor/src
-ENV APP_BUNDLE_DIR /opt/meteor/dist
-ENV BUILD_SCRIPTS_DIR /opt/build_scripts
-
-# Add entrypoint and build scripts
-COPY scripts $BUILD_SCRIPTS_DIR
-RUN chmod -R 770 $BUILD_SCRIPTS_DIR
-
-# install base dependencies, build app, cleanup
-RUN cd $BUILD_SCRIPTS_DIR && \
-		bash $BUILD_SCRIPTS_DIR/install-deps.sh && \
-		bash $BUILD_SCRIPTS_DIR/install-node.sh && \
-		bash $BUILD_SCRIPTS_DIR/post-install-cleanup.sh
-
-ENV ROOT_URL http://localhost
-ENV PORT 3000
-EXPOSE 3000
-
-WORKDIR $APP_BUNDLE_DIR/bundle
-
-# start the app
-ENTRYPOINT ["./entrypoint.sh"]
-CMD ["node", "main.js"]
+# install Meteor, build app, clean up
+ONBUILD RUN cd $APP_SOURCE_DIR && \
+            bash $BUILD_SCRIPTS_DIR/install-meteor.sh && \
+            bash $BUILD_SCRIPTS_DIR/build-meteor.sh && \
+            bash $BUILD_SCRIPTS_DIR/post-build-cleanup.sh
