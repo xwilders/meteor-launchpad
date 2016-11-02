@@ -1,5 +1,6 @@
 FROM debian:jessie
 MAINTAINER Jeremy Shimko <jeremy.shimko@gmail.com>
+# Forked from Jeremy Shimko
 
 RUN groupadd -r node && useradd -m -g node node
 
