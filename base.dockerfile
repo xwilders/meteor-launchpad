@@ -32,7 +32,6 @@ RUN chmod -R 770 $BUILD_SCRIPTS_DIR
 RUN cd $BUILD_SCRIPTS_DIR && \
 		bash $BUILD_SCRIPTS_DIR/install-deps.sh && \
 		bash $BUILD_SCRIPTS_DIR/install-node.sh && \
-    meteor npm run testOnce && \
 		bash $BUILD_SCRIPTS_DIR/post-install-cleanup.sh
 
 # Default values for Meteor environment variables
