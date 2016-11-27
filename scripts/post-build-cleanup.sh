@@ -1,7 +1,10 @@
 #!/bin/bash
 set -e
 
-printf "\n[-] Performing final cleanup...\n"
+printf "\n[-] Performing final cleanup...\n\n"
+
+# get out of the src dir, so we can delete it
+cd $APP_BUNDLE_DIR
 
 # Clean out docs
 rm -rf /usr/share/{doc,doc-base,man,locale,zoneinfo}
@@ -9,9 +12,8 @@ rm -rf /usr/share/{doc,doc-base,man,locale,zoneinfo}
 # Clean out package management dirs
 rm -rf /var/lib/{cache,log}
 
-# remove source build files
-rm -rf $APP_SOURCE_DIR/.meteor/local
-rm -rf $APP_SOURCE_DIR/node_modules
+# remove app source
+rm -rf $APP_SOURCE_DIR
 
 # remove meteor
 rm -rf /usr/local/bin/meteor
